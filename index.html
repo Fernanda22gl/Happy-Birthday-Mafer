@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¡Feliz Cumpleaños! 🎂</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold:#FFD700; --pink:#FF6FAB; --purple:#9B5DE5; --dark:#1a0a2e; }
+    body {
+      background: var(--dark);
+      font-family: 'Quicksand', sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .confetti-wrap { position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .dot { position:absolute; top:-20px; border-radius:50%; animation:fall linear infinite; opacity:0.85; }
+    @keyframes fall {
+      0%   { transform:translateY(0) rotate(0deg); opacity:1; }
+      100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+    }
+    .balloons { position:fixed; bottom:-80px; left:0; right:0; display:flex; justify-content:space-around; pointer-events:none; z-index:0; }
+    .balloon { width:40px; height:52px; border-radius:50% 50% 50% 50%/60% 60% 40% 40%; position:relative; animation:floatUp linear infinite; }
+    .balloon::after { content:''; position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); width:1px; height:18px; background:rgba(255,255,255,0.4); }
+    @keyframes floatUp {
+      0%   { transform:translateY(0) rotate(-3deg); opacity:1; }
+      50%  { transform:translateY(-110vh) rotate(3deg); opacity:0.7; }
+      100% { transform:translateY(-220vh); opacity:0; }
+    }
+    .card {
+      position:relative; z-index:1;
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(14px);
+      border:2px solid rgba(255,215,0,0.25);
+      border-radius:28px; padding:36px 30px 30px;
+      max-width:520px; width:92vw; text-align:center;
+      box-shadow:0 0 60px rgba(155,93,229,0.35),0 0 120px rgba(255,111,171,0.15);
+      animation:popIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes popIn {
+      from { transform:scale(0.5) rotate(-6deg); opacity:0; }
+      to   { transform:scale(1) rotate(0deg); opacity:1; }
+    }
+    h1 {
+      font-family:'Dancing Script',cursive;
+      font-size:clamp(2rem,8vw,3.4rem);
+      background:linear-gradient(135deg,var(--gold),var(--pink),var(--purple));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text; background-size:200%;
+      animation:shimmer 3s linear infinite; margin-bottom:6px;
+    }
+    @keyframes shimmer {
+      0%  { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+      100%{ background-position:0% 50%; }
+    }
+    .subtitle { color:rgba(255,255,255,0.65); font-size:0.95rem; margin-bottom:22px; letter-spacing:1px; }
+    .carousel-wrap {
+      position:relative; border-radius:18px; overflow:hidden;
+      margin-bottom:20px; box-shadow:0 8px 32px rgba(0,0,0,0.5); background:#111;
+    }
+    .carousel { display:flex; transition:transform 0.6s cubic-bezier(.77,0,.18,1); }
+    .slide { min-width:100%; height:325px; display:flex; align-items:center; justify-content:center; flex-direction:column; position:relative; overflow:hidden; }
+    .slide img { width:100%; height:100%; object-fit:cover; display:block; }
+    .slide .caption {
+      position:absolute; bottom:0; left:0; right:0;
+      font-family:'Dancing Script',cursive; font-size:1.4rem; color:#fff;
+      text-shadow:0 2px 8px rgba(0,0,0,0.8);
+      background:linear-gradient(transparent,rgba(0,0,0,0.65));
+      padding:28px 16px 12px;
+    }
+    .slide-placeholder {
+      width:100%; height:100%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:8px; color:rgba(255,255,255,0.35); font-size:0.82rem;
+      border:2px dashed rgba(255,255,255,0.15); border-radius:16px;
+    }
+    .slide-placeholder .icon { font-size:2.5rem; opacity:0.5; }
+    .slide-placeholder code { color:var(--pink); background:rgba(255,255,255,0.08); padding:2px 7px; border-radius:4px; }
+    .arrow {
+      position:absolute; top:50%; transform:translateY(-50%);
+      background:rgba(0,0,0,0.45); border:none; color:#fff;
+      font-size:1.3rem; width:36px; height:36px; border-radius:50%;
+      cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center;
+      backdrop-filter:blur(6px); transition:background 0.2s;
+    }
+    .arrow:hover { background:rgba(255,255,255,0.25); }
+    .arrow.left  { left:10px; }
+    .arrow.right { right:10px; }
+    .dots { display:flex; justify-content:center; gap:8px; margin-bottom:18px; }
+    .dot-btn {
+      width:10px; height:10px; border-radius:50%;
+      background:rgba(255,255,255,0.3); border:none; cursor:pointer;
+      transition:background 0.3s, transform 0.3s;
+    }
+    .dot-btn.active { background:var(--gold); transform:scale(1.4); }
+    .message { color:rgba(255,255,255,0.88); font-size:1rem; line-height:1.7; padding:0 10px; margin-bottom:22px; }
+    .name { font-family:'Dancing Script',cursive; font-size:1.6rem; color:var(--gold); }
+    .music-bar {
+      display:flex; align-items:center; gap:10px;
+      background:rgba(255,255,255,0.08); border-radius:14px;
+      padding:12px 16px; flex-wrap:wrap;
+    }
+    .music-info { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+    .music-icon { font-size:1.3rem; animation:bounce 1s infinite alternate; }
+    @keyframes bounce { from{transform:translateY(0);} to{transform:translateY(-5px);} }
+    .music-title { color:rgba(255,255,255,0.9); font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px; }
+    .music-title.no-song { color:rgba(255,255,255,0.3); font-style:italic; }
+    .play-btn {
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      border:none; color:#fff; border-radius:50px; padding:7px 18px;
+      cursor:pointer; font-family:'Quicksand',sans-serif; font-weight:600; font-size:0.85rem;
+      transition:opacity 0.2s, transform 0.2s; white-space:nowrap;
+    }
+    .play-btn:hover { opacity:0.85; transform:scale(1.05); }
+    .play-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+    .progress-wrap { width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:8px; cursor:pointer; }
+    .progress-bar { height:100%; background:linear-gradient(90deg,var(--pink),var(--gold)); border-radius:2px; width:0%; transition:width 0.4s linear; }
+    .instructions {
+      margin-top:18px;
+      background:rgba(255,215,0,0.06);
+      border:1px solid rgba(255,215,0,0.18);
+      border-radius:14px; padding:16px 18px; text-align:left;
+    }
+    .instructions h3 { color:var(--gold); font-size:0.88rem; margin-bottom:10px; }
+    .instructions ol { color:rgba(255,255,255,0.6); font-size:0.78rem; line-height:1.9; padding-left:18px; }
+    .instructions code { background:rgba(255,255,255,0.1); padding:1px 6px; border-radius:4px; color:var(--pink); font-size:0.76rem; }
+    .instructions strong { color:rgba(255,255,255,0.85); }
+
+    .cake {
+      font-size: 4.5rem;
+      margin-bottom: 22px;
+      display: inline-block;
+      animation: wiggle 2.2s ease-in-out infinite;
+    }
+    @keyframes wiggle {
+      0%,100% { transform: rotate(0);     }
+      20%      { transform: rotate(-8deg); }
+      40%      { transform: rotate(8deg);  }
+      60%      { transform: rotate(-4deg); }
+      80%      { transform: rotate(4deg);  }
+    }
+  </style>
+</head>
+<body>
+
+<div class="confetti-wrap" id="confetti"></div>
+<div class="balloons" id="balloons"></div>
+
+<div class="card">
+
+  <!-- ══════════════════════════════════════
+       ✏️  TÍTULO — cámbialo a tu gusto
+  ══════════════════════════════════════ -->
+  <h1>¡Feliz Cumpleaños! </h1>
+  <p class="subtitle">💪🏼 Un día muy especial 08/04/2026 💪🏼</p>
+
+  <!-- ══════════════════════════════════════
+       🖼️  CARRUSEL
+       • Pon tus fotos en la misma carpeta
+       • Cambia src="fotoX.jpg" por tu archivo
+       • Cambia el texto del caption
+       • Agrega o quita bloques <div class="slide">
+  ══════════════════════════════════════ -->
+  <div class="carousel-wrap">
+    <button class="arrow left" onclick="move(-1)">&#8595;</button>
+    <div class="carousel" id="carousel">
+
+      <!-- SLIDE 1 ─ cambia foto1.jpg -->
+      <div class="slide">
+        <img src="foto1.jpg" alt="Foto 1"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto1.jpg"</code>
+        </div>
+        <div class="caption">¡Crecer también es recordar!</div>
+      </div>
+
+      <!-- SLIDE 2 ─ cambia foto2.jpg -->
+      <div class="slide">
+        <img src="foto2.jpg" alt="Foto 2"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto2.jpg"</code>
+        </div>
+        <div class="caption">La esencia nunca cambia</div>
+      </div>
+
+      <!-- SLIDE 3 ─ cambia foto3.jpg -->
+      <div class="slide">
+        <img src="foto3.jpg" alt="Foto 3"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto3.jpg"</code>
+        </div>
+        <div class="caption">Aún vive mi niña interior</div>
+      </div>
+
+      <!-- SLIDE 4 ─ cambia foto4.jpg -->
+      <div class="slide">
+        <img src="foto4.jpg" alt="Foto 4"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">Pequeños momentos, grandes vistas 🌟</div>
+      </div>
+
+      <!-- SLIDE 5 ─ cambia foto5.jpg -->
+      <div class="slide">
+        <img src="foto5.jpg" alt="Foto 5"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto5.jpg"</code>
+        </div>
+        <div class="caption">¡Crecer no borra la magia!</div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide">
+        <img src="foto6.jpg" alt="Foto 6"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">¡Cada final es un nuevo inicio! 🌟</div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide">
+        <img src="foto7.jpg" alt="Foto 7"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">Más fuerte que ayer 🌟</div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="slide">
+        <img src="foto8.jpg" alt="Foto 8"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">¡Los sueños se cumplen! 🌟</div>
+      </div>
+
+      <!-- SLIDE 9 -->
+      <div class="slide">
+        <img src="foto9.jpg" alt="Foto 9"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">¡Disfruta el proceso! 🌟</div>
+      </div>
+
+      <!-- SLIDE 10 -->
+      <div class="slide">
+        <img src="foto10.jpg" alt="Foto 10"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">¡Solo un momento más! 🌟</div>
+      </div>
+      
+      <!-- SLIDE 11 -->
+      <div class="slide">
+        <img src="foto11.jpg" alt="Foto 11"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">Sencilla porque mi mejor accesorio es mi corazón</div>
+      </div>
+
+      <!-- SLIDE 12 -->
+      <div class="slide">
+        <img src="foto12.jpg" alt="Foto 12"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">Mi mejor versión 🌟</div>
+      </div>
+
+      <!-- SLIDE 13 -->
+      <div class="slide">
+        <img src="foto13.jpg" alt="Foto 15"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">Mi debilidad soy yo 🌟</div>
+      </div>
+
+      <!-- SLIDE 14 -->
+      <div class="slide">
+        <img src="foto14.jpg" alt="Foto 14"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="slide-placeholder" style="display:none">
+          <span class="icon">🖼️</span>
+          Reemplaza <code>src="foto4.jpg"</code>
+        </div>
+        <div class="caption">Me encanta todo de mi 🌟</div>
+      </div>
+
+    </div><!-- /carousel -->
+    <button class="arrow right" onclick="move(1)">&#8594;</button>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <!-- ══════════════════════════════════════
+       ✏️  MENSAJE — personalízalo
+  ══════════════════════════════════════ -->
+  <p class="message">
+    Soy mi mejor historia, cumpliendo sueños.<br>
+    Cada día me doy cuenta de todo lo que he <br>
+    logrado con constancia y <span class="name"> disciplina 𓆉𓇼♡</span><br>
+    Hoy celebro lo que soy..... y lo mejor está por llegar.<br>
+    🔋🎧🤍  ⋆.˚✮🎧✮˚.⋆
+  </p>
+
+  <!-- ══════════════════════════════════════
+       🎵  MÚSICA
+       Pon tu canción en la misma carpeta
+       y cambia "cancion.mp3" por tu archivo
+  ══════════════════════════════════════ -->
+  <audio id="audio" loop>
+    <source src="cancion.mp3" type="audio/mpeg">
+    <!-- <source src="cancion.ogg" type="audio/ogg">
+    <source src="cancion.wav" type="audio/wav"> -->
+  </audio>
+
+  <div class="music-bar">
+    <div class="music-info">
+      <span class="music-icon">🎵</span>
+      <span class="music-title no-song" id="musicTitle">Cargando canción…</span>
+    </div>
+    <button class="play-btn" id="playBtn" onclick="toggleMusic()" disabled>⏳</button>
+    <div class="progress-wrap" onclick="seekMusic(event)">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- Guía rápida visible en VS Code
+  <div class="instructions">
+    <h3>📝 Cómo personalizar este archivo</h3>
+    <ol>
+      <li>Pon todas tus fotos y tu canción en la <strong>misma carpeta</strong> que este HTML</li>
+      <li>Cambia <code>src="foto1.jpg"</code>, <code>foto2.jpg</code>… por el nombre exacto de tus imágenes</li>
+      <li>Edita el texto de cada <code>&lt;div class="caption"&gt;</code> con lo que quieras</li>
+      <li>Cambia <code>src="cancion.mp3"</code> por el nombre de tu archivo de música</li>
+      <li>Abre el HTML en tu navegador — <strong>la música inicia automáticamente</strong> 🎶</li>
+    </ol>
+  </div> -->
+
+</div><!-- /card -->
+
+<script>
+// ── AUDIO ─────────────────────────────────────────────
+const audio       = document.getElementById('audio');
+const playBtn     = document.getElementById('playBtn');
+const titleEl     = document.getElementById('musicTitle');
+const progressBar = document.getElementById('progressBar');
+
+audio.addEventListener('canplay', () => {
+  const src = audio.currentSrc || '';
+  const name = decodeURIComponent(src.split('/').pop().replace(/\.[^.]+$/, '')) || '🎶 Mi canción';
+  titleEl.textContent = name;
+  titleEl.classList.remove('no-song');
+  playBtn.disabled = false;
+  playBtn.textContent = '⏸ Pausar';
+  audio.play().catch(() => { playBtn.textContent = '▶ Reproducir'; });
+});
+
+audio.addEventListener('error', () => {
+  titleEl.textContent = 'Agrega tu cancion.mp3';
+  titleEl.classList.add('no-song');
+  playBtn.textContent = '—';
+  playBtn.disabled = true;
+});
+
+audio.addEventListener('timeupdate', () => {
+  if (audio.duration)
+    progressBar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+});
+
+audio.addEventListener('play',  () => { playBtn.textContent = '⏸ Pausar'; });
+audio.addEventListener('pause', () => { playBtn.textContent = '▶ Reanudar'; });
+
+function toggleMusic() {
+  audio.paused ? audio.play() : audio.pause();
+}
+
+function seekMusic(e) {
+  if (!audio.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+}
+
+// Autoplay al primer clic (política del navegador)
+document.addEventListener('click', () => {
+  if (audio.paused && !audio.error) audio.play().catch(()=>{});
+}, { once: true });
+
+// Intento de autoplay al cargar
+window.addEventListener('load', () => {
+  audio.play().catch(()=>{});
+});
+
+// ── CARRUSEL ──────────────────────────────────────────
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+const dotsEl = document.getElementById('dots');
+
+slides.forEach((_,i) => {
+  const b = document.createElement('button');
+  b.className = 'dot-btn' + (i===0 ? ' active' : '');
+  b.onclick = () => goTo(i);
+  dotsEl.appendChild(b);
+});
+
+function goTo(n) {
+  cur = (n + total) % total;
+  document.getElementById('carousel').style.transform = `translateX(-${cur*100}%)`;
+  document.querySelectorAll('.dot-btn').forEach((d,i) => d.classList.toggle('active', i===cur));
+}
+function move(dir) { goTo(cur + dir); }
+setInterval(() => move(1), 2500);
+
+// ── CONFETTI ──────────────────────────────────────────
+const colors = ['#FFD700','#FF6FAB','#9B5DE5','#00F5FF','#FF4E50','#F9D423'];
+const cWrap  = document.getElementById('confetti');
+for (let i=0; i<55; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  const s = Math.random()*10+5;
+  d.style.cssText = `left:${Math.random()*100}%;width:${s}px;height:${s}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*4+3}s;animation-delay:${Math.random()*4}s;`;
+  cWrap.appendChild(d);
+}
+
+// ── GLOBOS ────────────────────────────────────────────
+const bColors = ['#FF6FAB','#FFD700','#9B5DE5','#00c3ff','#38ef7d','#f7971e'];
+const bWrap   = document.getElementById('balloons');
+for (let i=0; i<10; i++) {
+  const b = document.createElement('div');
+  b.className = 'balloon';
+  b.style.cssText = `background:${bColors[i%bColors.length]};animation-duration:${Math.random()*5+6}s;animation-delay:${Math.random()*6}s;`;
+  bWrap.appendChild(b);
+}
+</script>
+</body>
+</html>
