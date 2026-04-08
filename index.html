@@ -374,11 +374,11 @@
   </audio>
 
   <div class="music-bar">
-    <div class="music-info">
+    <!-- <div class="music-info">
       <span class="music-icon">🎵</span>
       <span class="music-title no-song" id="musicTitle">Cargando canción…</span>
-    </div>
-    <button class="play-btn" id="playBtn" onclick="toggleMusic()" disabled>⏳</button>
+    </div> -->
+    <!-- <button class="play-btn" id="playBtn" onclick="toggleMusic()" disabled>⏳</button> -->
     <div class="progress-wrap" onclick="seekMusic(event)">
       <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -400,55 +400,55 @@
 
 <script>
 // ── AUDIO ─────────────────────────────────────────────
-const audio       = document.getElementById('audio');
-const playBtn     = document.getElementById('playBtn');
-const titleEl     = document.getElementById('musicTitle');
-const progressBar = document.getElementById('progressBar');
+//const audio       = document.getElementById('audio');
+//const playBtn     = document.getElementById('playBtn');
+//const titleEl     = document.getElementById('musicTitle');
+//const progressBar = document.getElementById('progressBar');
 
-audio.addEventListener('canplay', () => {
-  const src = audio.currentSrc || '';
-  const name = decodeURIComponent(src.split('/').pop().replace(/\.[^.]+$/, '')) || '🎶 Mi canción';
-  titleEl.textContent = name;
-  titleEl.classList.remove('no-song');
-  playBtn.disabled = false;
-  playBtn.textContent = '⏸ Pausar';
-  audio.play().catch(() => { playBtn.textContent = '▶ Reproducir'; });
-});
+// audio.addEventListener('canplay', () => {
+//   const src = audio.currentSrc || '';
+//   const name = decodeURIComponent(src.split('/').pop().replace(/\.[^.]+$/, '')) || '🎶 Mi canción';
+//   titleEl.textContent = name;
+//   titleEl.classList.remove('no-song');
+//   playBtn.disabled = false;
+//   playBtn.textContent = '⏸ Pausar';
+//   audio.play().catch(() => { playBtn.textContent = '▶ Reproducir'; });
+// });
 
-audio.addEventListener('error', () => {
-  titleEl.textContent = 'Agrega tu cancion.mp3';
-  titleEl.classList.add('no-song');
-  playBtn.textContent = '—';
-  playBtn.disabled = true;
-});
+// audio.addEventListener('error', () => {
+//   titleEl.textContent = 'Agrega tu cancion.mp3';
+//   titleEl.classList.add('no-song');
+//   playBtn.textContent = '—';
+//   playBtn.disabled = true;
+// });
 
-audio.addEventListener('timeupdate', () => {
-  if (audio.duration)
-    progressBar.style.width = (audio.currentTime / audio.duration * 100) + '%';
-});
+// audio.addEventListener('timeupdate', () => {
+//   if (audio.duration)
+//     progressBar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+// });
 
-audio.addEventListener('play',  () => { playBtn.textContent = '⏸ Pausar'; });
-audio.addEventListener('pause', () => { playBtn.textContent = '▶ Reanudar'; });
+// audio.addEventListener('play',  () => { playBtn.textContent = '⏸ Pausar'; });
+// audio.addEventListener('pause', () => { playBtn.textContent = '▶ Reanudar'; });
 
-function toggleMusic() {
-  audio.paused ? audio.play() : audio.pause();
-}
+// function toggleMusic() {
+//   audio.paused ? audio.play() : audio.pause();
+// }
 
-function seekMusic(e) {
-  if (!audio.duration) return;
-  const r = e.currentTarget.getBoundingClientRect();
-  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
-}
+// function seekMusic(e) {
+//   if (!audio.duration) return;
+//   const r = e.currentTarget.getBoundingClientRect();
+//   audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+// }
 
 // Autoplay al primer clic (política del navegador)
 document.addEventListener('click', () => {
   if (audio.paused && !audio.error) audio.play().catch(()=>{});
 }, { once: true });
 
-// Intento de autoplay al cargar
-window.addEventListener('load', () => {
-  audio.play().catch(()=>{});
-});
+// // Intento de autoplay al cargar
+// window.addEventListener('load', () => {
+//   audio.play().catch(()=>{});
+// });
 
 // ── CARRUSEL ──────────────────────────────────────────
 let cur = 0;
